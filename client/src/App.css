@@ -1,0 +1,46 @@
+.App {
+  text-align: center;
+}
+
+h1 {
+  color: brown;
+}
+
+form {
+  background: linear-gradient(
+    to bottom left,
+    rgb(223, 190, 190),
+    rgb(245, 143, 143)
+  );
+  display: inline-block;
+  padding: 20px;
+}
+
+form div {
+  margin: 15px;
+}
+
+label {
+  display: inline-block;
+  width: 150px;
+  padding: 10px;
+}
+
+div {
+  margin-top: 2%;
+}
+
+.profilePicPreview{
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+}
+
+nav{
+  background-color: aquamarine;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  font-size: 1.3rem;
+
+}
