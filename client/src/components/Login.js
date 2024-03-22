@@ -18,7 +18,7 @@ function Login() {
       body: dataToSend,
     };
 
-    let JSONData = await fetch("http://localhost:1357/login", requestOption);
+    let JSONData = await fetch("/login", requestOption);
     let JSOData = await JSONData.json();
 
     if (JSOData.status === "Success") {

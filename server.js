@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const multer = require("multer");
 const dotenv=require('dotenv');
+const path = require("node:path");
 dotenv.config();
 
 const storage = multer.diskStorage({
@@ -21,6 +22,8 @@ let app = express();
 app.use(cors());
 // app.use(express.static('uploads'))
 app.use("/uploads", express.static("uploads"));
+
+app.use(express.static(path.join(__dirname,'./client/build')));
 
 let userSchema = new mongoose.Schema({
   firstName: String,
