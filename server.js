@@ -1,26 +1,24 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const multer=require('multer');
+const multer = require("multer");
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb)=> {
-    cb(null, 'uploads')
+  destination: (req, file, cb) => {
+    cb(null, "uploads");
   },
-  filename:  (req, file, cb)=> {
-console.log(file);
-cb(null,`${Date.now()}_${file.originalname}`)
+  filename: (req, file, cb) => {
+    console.log(file);
+    cb(null, `${Date.now()}_${file.originalname}`);
   },
 });
 
-const upload = multer({ storage: storage })
-
+const upload = multer({ storage: storage });
 
 let app = express();
 app.use(cors());
 // app.use(express.static('uploads'))
-app.use('/uploads', express.static('uploads'))
-
+app.use("/uploads", express.static("uploads"));
 
 let userSchema = new mongoose.Schema({
   firstName: String,
@@ -34,9 +32,9 @@ let userSchema = new mongoose.Schema({
 
 let User = new mongoose.model("user", userSchema);
 
-app.post("/signup",upload.single("profilePic"), async (request, response) => {
+app.post("/signup", upload.single("profilePic"), async (request, response) => {
   console.log(request.body);
-  console.log(request.file.path)
+  console.log(request.file.path);
 
   try {
     let newUser = new User({
@@ -52,48 +50,45 @@ app.post("/signup",upload.single("profilePic"), async (request, response) => {
     response.json({ status: "success", msg: "User created successfully" });
   } catch (error) {
     response.json({
-      status: "Failure",msg: "Unable to create account",err: error,});
+      status: "Failure",
+      msg: "Unable to create account",
+      err: error,
+    });
   }
 });
 
-app.post('/login',upload.none(),async(request,response)=>{
+app.post("/login", upload.none(), async (request, response) => {
   console.log(request.body);
 
-let userDetails = await User.find().and({email:request.body.email});
+  let userDetails = await User.find().and({ email: request.body.email });
 
-if(userDetails.length > 0){
-  if(userDetails[0].password== request.body.password){
+  if (userDetails.length > 0) {
+    if (userDetails[0].password == request.body.password) {
+      let userDataToSend = {
+        firstName: userDetails[0].firstName,
+        lastName: userDetails[0].lastName,
+        age: userDetails[0].age,
+        email: userDetails[0].email,
+        mobileNO: userDetails[0].mobileNO,
+        profilePic: userDetails[0].profilePic,
+      };
 
-    let userDataToSend={
-      firstName:userDetails[0].firstName,
-      lastName:userDetails[0].lastName,
-      age:userDetails[0].age,
-      email:userDetails[0].email,
-      mobileNO:userDetails[0].mobileNO,
-      profilePic:userDetails[0].profilePic,
+      response.json({ status: "Success", data: userDataToSend });
+    } else {
+      response.json({ status: "Failure", msg: "invalid password" });
     }
-
-    response.json({status:'Success',data:userDataToSend});
-
-  }else{
-    response.json({status:"Failure", msg:"invalid password"});
+  } else {
+    response.json({ status: "Failure", msg: "user doesnot exist" });
   }
-
-}else{
-  response.json({status:"Failure", msg:"user doesnot exist"});
-}
-
 });
 
-app.listen(1357, () => {
+app.listen(process.env.port, () => {
   console.log("port number is 1357");
 });
 
 let connectToMDB = async () => {
   try {
-    await mongoose.connect(
-      "mongodb+srv://Dillibabu:dilli123@cluster0.e1hyx1d.mongodb.net/dilliMDB?retryWrites=true&w=majority&appName=Cluster0"
-    );
+    await mongoose.connect(process.env.mdbUrl);
     console.log("Successfully connected to MongoDB");
   } catch (error) {
     console.log("Unable to connect to MongoDB");
@@ -101,4 +96,3 @@ let connectToMDB = async () => {
 };
 
 connectToMDB();
-
